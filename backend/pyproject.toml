@@ -1,0 +1,24 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Andrew Kohl",email = "akohl26@wgu.edu"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi (>=0.135.1,<0.136.0)",
+    "uvicorn (>=0.41.0,<0.42.0)",
+    "sqlalchemy (>=2.0.48,<3.0.0)",
+    "pandas (>=3.0.1,<4.0.0)",
+    "psycopg2 (>=2.9.11,<3.0.0)",
+    "python-dotenv (>=1.2.2,<2.0.0)"
+]
+
+[tool.poetry]
+packages = [{include = "backend", from = "src"}]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
