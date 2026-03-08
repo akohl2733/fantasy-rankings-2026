@@ -1,13 +1,32 @@
-from fastapi import FastAPI
-from schema import PlayerModel
-from model import Player
+from fastapi import Depends, FastAPI
 
-app = FastAPI()
+from db import engine, get_db
+from model import Base, Player
+from schema import PlayerModel
+import uvicorn
+
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI() 
 
 @app.get("/")
 def basic():
     return {"something": "For now"}
 
+@app.get("/players", response_model=list[PlayerModel])
+def get_players(db = Depends(get_db)):     
+    all_players = db.query(Player).all()
+    if all_players is None:
+        return {"Error": "No data"}
+    return all_players
+
+@app.get("/players/{id}", response_model=PlayerModel)
+def get_indv_players(player_id: int, db=Depends(get_db)):
+    specific_player = db.query(Player).filter(Player.rank == player_id).first()
+    if specific_player is None:
+        return {"That player": "Does not exist"}
+    return specific_player
+        
 @app.get("/health")
 def health():
     return {"this": "worked"}
