@@ -37,7 +37,7 @@ export default function allPlayers() {
     }
     return (
         <>
-            <div>
+            <div className="flex justify-center w-full">
                 <PlayerCard players={players}/>
             </div>
         </>
