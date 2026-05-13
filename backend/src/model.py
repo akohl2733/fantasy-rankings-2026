@@ -1,4 +1,4 @@
-from sqlalchemy import String
+from sqlalchemy import Table, Column, Integer, String, Float, MetaData
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 class Base(DeclarativeBase):
@@ -23,3 +23,28 @@ class Player(Base):
     turnovers: Mapped[float]
     total_points: Mapped[float]
     tier: Mapped[int]
+
+# --------------------------------------------------------------------
+
+metadata_obj = MetaData()
+
+all_players_core = Table(
+    'all_players_core',
+    metadata_obj,
+    Column("id", Integer, primary_key=True),
+    Column("rank", Integer, nullable=False),
+    Column("name", String, nullable=False),
+    Column("position", String(6), nullable=False),
+    Column("position_rank", Integer),
+    Column("team", String(30), nullable=False),
+    Column("receptions", Float),
+    Column("receiving_yards", Float),
+    Column("receiving_tds", Float),
+    Column("rushing_yards", Float),
+    Column("rushing_tds", Float),
+    Column("passing_yards", Float),
+    Column("passing_tds", Float),
+    Column("turnovers", Float),
+    Column("total_points", Float),
+    Column("tier", Float)
+)
