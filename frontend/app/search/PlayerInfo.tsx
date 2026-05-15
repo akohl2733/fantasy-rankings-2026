@@ -20,27 +20,39 @@ interface Player {
     tier: number;
 }
 
-export default function getPlayerInfo() {
-    const [ players, setPlayers ] = useState<Player[]>([]);
+export default function PlayerInfo({id} : {id: number}) {
+    const [ player, setPlayer ] = useState<Player | null>(null);
     const [ loading, setLoading ] = useState(true);
     const [ error, setError ] = useState<string | null>("");
 
+    const wrNames = ["Justin Jefferson", "Jamarr Chase", "Ceedee Lamb"];
+
+    const reduceName = (nameList: string[]) => {
+        return nameList.reduce((accumulator: Record<string, number>, currVal: string, i) => {
+            accumulator[currVal] = i + 1;
+            return accumulator;
+        }, {})
+    }
+
+    const newNames = reduceName(wrNames);
+
+
     useEffect(() => {
-        async function getPlayers() {
+        async function getPlayer() {
             try {
-                const response = await fetch("http://localhost:8000/players");
+                const response = await fetch(`http://localhost:8000/players/${id}`);
                 if (!response.ok) {
                     throw new Error(`Error on fetching data: ${response.status}`)
                 }
                 const clean_response = await response.json();
-                setPlayers(clean_response);
+                setPlayer(clean_response);
             } catch (e: any) {
                 setError(e.message);
             } finally {
                 setLoading(false);
             }
         };
-        getPlayers();
+        getPlayer();
     }, [])
 
     if (loading) {
@@ -50,15 +62,18 @@ export default function getPlayerInfo() {
     }
 
     if (error) {
-        return <div>There was an error.</div>
+        return <div>There was an error: {error}</div>
     }
 
     return (
         <>
             <div>
-                {players.map((value, index) => (
-                    <PlayerToken key={index} player={value} />
-                ))}
+                {player && <PlayerToken player={player} />}
+                <div className='bg-black'>
+                    {Object.entries(newNames).map(([name, idx]) => (
+                        <p key={idx}>{name}</p>
+                    ))}
+                </div>
             </div>
         </>
     )

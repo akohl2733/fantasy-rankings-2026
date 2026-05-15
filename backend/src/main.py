@@ -35,8 +35,8 @@ def get_players(db = Depends(get_db)):
     return all_players
 
 @app.get("/players/{id}", response_model=PlayerModel)
-def get_indv_players(player_id: int, db=Depends(get_db)):
-    specific_player = db.query(Player).filter(Player.rank == player_id).first()
+def get_indv_players(id: int, db=Depends(get_db)):
+    specific_player = db.query(Player).filter(Player.rank == id).first()
     if specific_player is None:
         return {"That player": "Does not exist"}
     return specific_player
