@@ -6,16 +6,16 @@ export default function NavBar() {
     const pathname = usePathname();
 
     const setLinkStyle = (val: string) => {
-        val == pathname ? "text-blue-500 hover:blue-700" : 'text-white hover:gray-300'
+        return val === pathname ? "text-gray-500 hover:gray-700" : 'text-white hover:gray-300'
     }
 
     return (
-        <div>
-            <ul>
-                <li><Link href="/">Home</Link></li>
-                <li><Link href="/rankings">Rankings</Link></li>
-                <li><Link href="/search">Search</Link></li>
-            </ul>
-        </div>
+        <nav className="p-5">
+            <div className="flex gap-10 p-5 bg-red-200 rounded-md">
+                <Link href="/" className={`font-bold ${setLinkStyle("/")}`}>Home</Link>
+                <Link href="/rankings" className={`font-bold ${setLinkStyle("/rankings")}`}>Rankings</Link>
+                <Link href="/search" className={`font-bold ${setLinkStyle("/search")}`}>Search</Link>
+            </div>
+        </nav>
     )
 }
