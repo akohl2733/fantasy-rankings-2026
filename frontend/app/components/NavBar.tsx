@@ -1,20 +1,34 @@
 'use client';
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+
+const NAV_LINKS = [
+    { name: "Home", href: '/'},
+    { name: "Rankings", href: '/rankings'},
+    { name: "Search", href: '/search'},
+];
 
 export default function NavBar() {
-    const pathname = usePathname();
-
-    const setLinkStyle = (val: string) => {
-        return val === pathname ? "text-gray-500 hover:gray-700" : 'text-white hover:gray-300'
-    }
 
     return (
-        <nav className="p-5">
-            <div className="flex gap-10 p-5 bg-red-200 rounded-md">
-                <Link href="/" className={`font-bold ${setLinkStyle("/")}`}>Home</Link>
-                <Link href="/rankings" className={`font-bold ${setLinkStyle("/rankings")}`}>Rankings</Link>
-                <Link href="/search" className={`font-bold ${setLinkStyle("/search")}`}>Search</Link>
+        <nav className='w-full py-5'>
+            <div className="w-full flex justify-evenly items-center">
+                <div className="flex-1 max-w-64 min-w-32 p-5 rounded-md text-center font-medium text-2xl text-gray-500 hover:text-gray-700 overflow-hidden text-ellipsis whitespace-nowrap">
+                    Zeebe Fantasy
+                </div>
+                <div className="flex-1 flex gap-25 p-5 rounded-md justify-center items-center">
+                    {NAV_LINKS.map((link, idx) => {
+                        return <Link 
+                                key={idx} 
+                                href={link.href} 
+                                className="font-medium text-2xl text-gray-500 hover:text-gray-700">
+                                    {link.name}
+                                </Link>
+                    })
+                    }
+                </div>
+                <div className="flex-1 max-w-64 min-w-32 p-5 rounded-md font-medium text-2xl text-center text-gray-500 hover:text-gray-700  overflow-hidden text-ellipsis whitespace-nowrap">
+                    Learn our Story
+                </div>
             </div>
         </nav>
     )
