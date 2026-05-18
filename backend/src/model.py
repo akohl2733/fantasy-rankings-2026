@@ -5,7 +5,7 @@ class Base(DeclarativeBase):
     pass
 
 class Player(Base):
-    __tablename__ = "player"
+    __tablename__ = "all_players"
 
     id: Mapped[int]=mapped_column(primary_key=True, index=True)
     rank: Mapped[int]=mapped_column(nullable=False)
