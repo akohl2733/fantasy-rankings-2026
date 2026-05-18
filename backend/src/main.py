@@ -3,12 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db import engine, get_db, get_async_session
-from model import Base, Player
+from db import get_async_session
+from model import Player
 from schema import PlayerModel
 import uvicorn
-
-Base.metadata.create_all(bind=engine)
 
 app = FastAPI() 
 
@@ -31,16 +29,27 @@ def basic():
 
 
 @app.get("/players", response_model=list[PlayerModel])
-def get_players(db = Depends(get_db)):     
-    all_players = db.query(Player).all()
+async def get_players(
+    db: AsyncSession = Depends(get_async_session)
+):     
+    stmt = select(Player)
+    result = await db.execute(stmt)
+    all_players = result.scalars().all()
+
     if all_players is None:
         return {"Error": "No data"}
     return all_players
 
 
 @app.get("/players/{id}", response_model=PlayerModel)
-def get_indv_players(id: int, db=Depends(get_db)):
-    specific_player = db.query(Player).filter(Player.rank == id).first()
+async def get_indv_players(
+    id: int, 
+    db: AsyncSession = Depends(get_async_session)
+):
+    stmt = select(Player).filter(Player.rank == id)
+    result = await db.execute(stmt)
+    specific_player = result.scalars().first()
+
     if specific_player is None:
         return {"That player": "Does not exist"}
     return specific_player
