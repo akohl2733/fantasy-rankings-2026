@@ -27,10 +27,9 @@ export async function getPlayersBySimilarName(playerName: string | null) {
         if (!res.ok) {
             throw new Error(`There was an Error: ${res.status}`);
         }
-        const data = await res.json();
-        const playerNameList = data.map((p: Player) => p.name);
+        const playerList = await res.json();
         
-        return playerNameList
+        return playerList
     } catch {
         console.error("Error on fetching.");
     }
