@@ -1,1 +1,1 @@
-from model import all_players_core
+# from model import all_players_core

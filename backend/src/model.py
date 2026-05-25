@@ -48,3 +48,26 @@ all_players_core = Table(
     Column("total_points", Float),
     Column("tier", Float)
 )
+
+historical_data = Table(
+    "historical_data",
+    metadata_obj,
+    Column("id", Integer, primary_key=True),
+    Column("rank_ppg", Integer, nullable=False),
+    Column("rank_total", Integer, nullable=False),
+    Column("name", String, nullable=False),
+    Column("position", String(6), nullable=False),
+    Column("season", Integer, nullable=False),
+    Column("team", String(30), nullable=False),
+    Column("receptions", Float),
+    Column("receiving_yards", Float),
+    Column("receiving_tds", Float),
+    Column("rushing_yards", Float),
+    Column("rushing_tds", Float),
+    Column("passing_yards", Float),
+    Column("passing_tds", Float),
+    Column("turnovers", Float),
+    Column("points_per_game", Float),
+    Column("total_points", Float),
+    Column("tier", Integer),
+)
