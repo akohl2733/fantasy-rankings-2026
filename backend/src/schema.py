@@ -17,3 +17,23 @@ class PlayerModel(BaseModel):
     turnovers: float
     total_points: float
     tier: int
+
+class HistoricalPlayerModel(BaseModel):
+    id: int
+    rank_ppg: int
+    rank_total: int
+    name: str
+    position: str
+    season: int
+    team: str
+    receptions: int
+    receiving_yards: int
+    receiving_tds: int
+    rushing_yards: int
+    rushing_tds: int
+    passing_yards: int
+    passing_tds: int
+    turnovers: int
+    points_per_game: float
+    total_points: float
+    position_tier: int

@@ -5,8 +5,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 csv_file = os.path.join(BASE_DIR, "data/files/fantasy-rankings-07-25-25.csv")
 
 import pandas as pd
-from db import async_session_factory
-from model import Player
+from src.db import async_session_factory
+from src.model import Player
 
 df = pd.read_csv(csv_file)
 

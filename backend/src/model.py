@@ -24,50 +24,25 @@ class Player(Base):
     total_points: Mapped[float]
     tier: Mapped[int]
 
-# --------------------------------------------------------------------
 
-metadata_obj = MetaData()
+class HistoricalPlayer(Base):
+    __tablename__ = "historical_player_data"
 
-all_players_core = Table(
-    'all_players_core',
-    metadata_obj,
-    Column("id", Integer, primary_key=True),
-    Column("rank", Integer, nullable=False),
-    Column("name", String, nullable=False),
-    Column("position", String(6), nullable=False),
-    Column("position_rank", Integer),
-    Column("team", String(30), nullable=False),
-    Column("receptions", Float),
-    Column("receiving_yards", Float),
-    Column("receiving_tds", Float),
-    Column("rushing_yards", Float),
-    Column("rushing_tds", Float),
-    Column("passing_yards", Float),
-    Column("passing_tds", Float),
-    Column("turnovers", Float),
-    Column("total_points", Float),
-    Column("tier", Float)
-)
-
-historical_data = Table(
-    "historical_data",
-    metadata_obj,
-    Column("id", Integer, primary_key=True),
-    Column("rank_ppg", Integer, nullable=False),
-    Column("rank_total", Integer, nullable=False),
-    Column("name", String, nullable=False),
-    Column("position", String(6), nullable=False),
-    Column("season", Integer, nullable=False),
-    Column("team", String(30), nullable=False),
-    Column("receptions", Float),
-    Column("receiving_yards", Float),
-    Column("receiving_tds", Float),
-    Column("rushing_yards", Float),
-    Column("rushing_tds", Float),
-    Column("passing_yards", Float),
-    Column("passing_tds", Float),
-    Column("turnovers", Float),
-    Column("points_per_game", Float),
-    Column("total_points", Float),
-    Column("tier", Integer),
-)
+    id: Mapped[int]=mapped_column(primary_key=True, index=True)
+    rank_ppg: Mapped[int]=mapped_column(nullable=False)
+    rank_total: Mapped[int]=mapped_column(nullable=False)
+    name: Mapped[str]=mapped_column(String(50), nullable=False)
+    position: Mapped[str]=mapped_column(String(3), nullable=False)
+    season: Mapped[int]
+    team: Mapped[str]=mapped_column(String(30), nullable=False)
+    receptions: Mapped[int]
+    receiving_yards: Mapped[int]
+    receiving_tds: Mapped[int]
+    rushing_yards: Mapped[int]
+    rushing_tds: Mapped[int]
+    passing_yards: Mapped[int]
+    passing_tds: Mapped[int]
+    turnovers: Mapped[int]
+    points_per_game: Mapped[float]
+    total_points: Mapped[float]
+    position_tier: Mapped[int]
