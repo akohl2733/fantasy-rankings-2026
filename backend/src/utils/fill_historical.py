@@ -47,6 +47,6 @@ async def input_historical_data(seasons: list[int]):
             print("Historical data successfully loaded 🫡")
 
 
-if __name__ == "__main__":
-    asyncio.run(input_historical_data([2023, 2024, 2025]))
-    print("Success 😎")
+# if __name__ == "__main__":
+#     asyncio.run(input_historical_data([2023, 2024, 2025]))
+#     print("Success 😎")

@@ -4,8 +4,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db import get_async_session
-from model import Player
-from schema import PlayerModel
+from model import Player, HistoricalPlayer
+from schema import PlayerModel, HistoricalPlayerModel
 import uvicorn
 
 app = FastAPI() 
@@ -68,6 +68,25 @@ async def get_player_by_name_search_bar(
     players = result.scalars().all()
 
     return players
+
+@app.get("/historical/{season}", response_model=list[HistoricalPlayerModel])
+async def getHistoricalSeasons(
+    season: int, 
+    position: str = Query(default=""), 
+    db: AsyncSession = Depends(get_async_session)
+):
+    
+    stmt = select(HistoricalPlayer).where(HistoricalPlayer.season == season)
+    if position and position.strip() != "":
+        stmt = stmt.where(HistoricalPlayer.position == position.upper())
+
+    res = await db.execute(stmt)
+    historical_players = res.scalars().all()
+
+    if historical_players is None:
+        return {"Error": "No data"}
+    print(len(historical_players))
+    return historical_players
 
 
 @app.get("/health")
