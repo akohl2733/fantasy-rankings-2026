@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+# personal rankings model
 class PlayerModel(BaseModel):
     id: int
     rank: int
@@ -18,8 +19,8 @@ class PlayerModel(BaseModel):
     total_points: float
     tier: int
 
-class HistoricalPlayerModel(BaseModel):
-    id: int
+# data for each season to be appended
+class HistoricalPlayerSeasonData(BaseModel):
     rank_ppg: int
     rank_total: int
     name: str
@@ -37,3 +38,10 @@ class HistoricalPlayerModel(BaseModel):
     points_per_game: float
     total_points: float
     position_tier: int
+
+# schema that will be sent in API calls
+class HistoricalPlayerModel(BaseModel):
+    id: int
+    name: str
+    data: list[HistoricalPlayerSeasonData]
+    
