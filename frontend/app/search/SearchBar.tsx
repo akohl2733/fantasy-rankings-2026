@@ -17,7 +17,10 @@ export default function PlayerSearchBar() {
     
     // initialize debounced function when component mounts
     useEffect(() => {
+        // set this function to debouncedFetchRef
         debouncedFetchRef.current = (name: string) => {
+
+            // clear any existing timeout
             if (timerRef.current) {
                 clearTimeout(timerRef.current);
             }
@@ -27,6 +30,7 @@ export default function PlayerSearchBar() {
                 return;
             }
 
+            // try and get the players after 300 ms of no clicking
             timerRef.current = setTimeout(async() => {
                 try {
                     const res = await getPlayersBySimilarName(name);
@@ -36,10 +40,11 @@ export default function PlayerSearchBar() {
                 }
             }, 300)
         };
+        // lazy loaded callback - run cleanup function when finished (cannot use normal if block)
         return () => {
             if (timerRef.current) clearTimeout(timerRef.current);
         }
-    }, []);
+    }, []); // do this on mount only
 
 
     // call search_result endpoint if playerName changes
@@ -54,6 +59,7 @@ export default function PlayerSearchBar() {
     const handleInputChange = (e: string) => {
         setIsPending(false);
         setPlayerName(e);
+        setSelectedPlayer(null)
     }
 
 
@@ -70,35 +76,46 @@ export default function PlayerSearchBar() {
     }
 
 
-    return (
+return (
         <>
-            <div className='flex gap-10 justify-center'>
-                <div>
-                    <input 
-                        ref={inputRef}
-                        type='text'
-                        value={playerName}
-                        onChange={(e) => handleInputChange(e.target.value)} 
-                        placeholder='ex. Justin Jettas'
-                        className="border-md border-black rounded-md bg-sky-200 text-gray-600 p-5 min-w-90 max-h-15"/>
-                    {players.length > 0 && <div className="border border-gray-400 rounded-md">
-                        {!isPending && players.map((player, idx) => {
-                            return <button key={idx} id={`${idx}`} onClick={() => onSelectPlayerClick(player)}>{player.name}</button>
-                        })}
+            <div className="flex flex-col gap-12 w-full py-6">
+                
+                <div className='flex gap-4 justify-center items-start w-full'>
+                    <div className="relative">
+                        <input 
+                            ref={inputRef}
+                            type='text'
+                            value={playerName}
+                            onChange={(e) => handleInputChange(e.target.value)} 
+                            placeholder='ex. Justin Jefferson'
+                            className="border border-gray-400 rounded-md bg-sky-200 text-gray-600 p-4 min-w-90 h-15 focus:outline-none"/>
+                        {players.length > 0 && !isPending && (
+                            <div className="absolute left-0 right-0 mt-1 border border-gray-400 rounded-md bg-white flex flex-col z-50 max-h-60 overflow-y-auto shadow-lg">
+                                {players.map((player, idx) => (
+                                    <button 
+                                        key={player.id || idx} 
+                                        id={`${idx}`} 
+                                        onClick={() => onSelectPlayerClick(player)}
+                                        className="w-full text-left p-3 text-gray-700 hover:bg-gray-100 border-b border-gray-100 last:border-0 text-lg transition-colors"
+                                    >
+                                        {player.name}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                     </div>
-                    }
-                </div>
-                <button 
-                    onClick={(e) => clickBehavior()}
-                    className='border-md border-black rounded-md bg-gray-600 text-white px-3 text-sm max-h-15'
-                >
+                    
+                    <button 
+                        onClick={() => clickBehavior()}
+                        className='border border-black rounded-md bg-gray-600 text-white px-4 h-15 text-sm font-medium hover:bg-gray-700 transition-colors'
+                    >
                         Start typing a player's name...
-                </button>
-            </div>
-            <div className='flex justify-center items-center w-full border-2 border-red-200'>
-                <div className="flex items-center border border-green-200">
+                    </button>
+                </div>
+                    <div className='w-full flex justify-center'>
                     {selectedPlayer && <PlayerCard players={[selectedPlayer]} />}
                 </div>
+
             </div>
         </>
     )
