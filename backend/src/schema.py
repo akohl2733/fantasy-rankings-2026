@@ -20,28 +20,36 @@ class PlayerModel(BaseModel):
     tier: int
 
 # data for each season to be appended
-class HistoricalPlayerSeasonData(BaseModel):
-    rank_ppg: int
-    rank_total: int
-    name: str
-    position: str
+class HistoricalPlayerSeasonDataModel(BaseModel):
     season: int
     team: str
+    
+    targets: int
+    target_share: float
     receptions: int
     receiving_yards: int
     receiving_tds: int
+
+    carries: int
     rushing_yards: int
     rushing_tds: int
+
     passing_yards: int
     passing_tds: int
+
     turnovers: int
+
     points_per_game: float
     total_points: float
+    rank_ppg: int
+    rank_total: int
     position_tier: int
 
 # schema that will be sent in API calls
 class HistoricalPlayerModel(BaseModel):
     id: int
     name: str
-    data: list[HistoricalPlayerSeasonData]
+    position: str
+    headshot_url: str
+    data: list[HistoricalPlayerSeasonDataModel]
     

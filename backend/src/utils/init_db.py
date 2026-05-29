@@ -1,6 +1,6 @@
 import asyncio
 from src.db import async_engine
-from src.model import Base, Player, HistoricalPlayer
+from src.model import Base, Player, HistoricalPlayer, HistoricalPlayerSeasonData
 
 async def init_db():
     async with async_engine.begin() as conn:

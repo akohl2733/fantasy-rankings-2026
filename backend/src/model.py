@@ -29,11 +29,11 @@ class HistoricalPlayerSeasonData(Base):
     __tablename__ = "historical_player_season_data"
 
     __table_args__ = (
-        UniqueConstraint("player_id", "season", name="uq_player_season")
+        UniqueConstraint("player_id", "season", name="uq_player_season"),
     )
 
     id: Mapped[int]=mapped_column(primary_key=True, index=True)
-    player_id: Mapped[int]=mapped_column(ForeignKey("historical_player.id", nullable=False))
+    player_id: Mapped[int]=mapped_column(ForeignKey("historical_player.id"), nullable=False)
     season: Mapped[int]=mapped_column(nullable=False)
     team: Mapped[str]=mapped_column(String(30), nullable=False)
 
@@ -58,7 +58,7 @@ class HistoricalPlayerSeasonData(Base):
     rank_total: Mapped[int]=mapped_column(nullable=False)
     position_tier: Mapped[int]=mapped_column(default=0)
 
-    player: Mapped[HistoricalPlayer] = mapped_column(ForeignKey("season_data"))
+    player: Mapped["HistoricalPlayer"] = relationship(back_populates="season_data")
 
 
 class HistoricalPlayer(Base):
@@ -69,4 +69,4 @@ class HistoricalPlayer(Base):
     position: Mapped[str]=mapped_column(String(3), nullable=False)
     headshot_url: Mapped[str]=mapped_column(String(500), nullable=True)
 
-    season_data: Mapped[list[HistoricalPlayerSeasonData]] = relationship(back_populates="historical_player")
+    season_data: Mapped[list["HistoricalPlayerSeasonData"]] = relationship(back_populates="player")
