@@ -1,4 +1,5 @@
 import { Player } from "../components/PlayerCard";
+import { HistoricalPlayer } from "../historical/historicalPlayers";
 import { mainLogger } from "../lib/log";
 
 
@@ -43,4 +44,25 @@ export async function getPlayersBySimilarName(playerName: string | null) {
         logger.error("Error fetching players by similar names", e);
         console.error("Error on fetching.");
     }
+}
+
+// Hits the /historical endpoint for list of all player data
+export async function getHistoricalPlayers(): Promise<HistoricalPlayer[]> {
+    const logger = mainLogger.getSubLogger({ name: "getHistoricalPlayers" });
+    try {
+        const res = await fetch("http://localhost:8000/historical");
+        if (!res.ok) {
+            throw new Error(`There was a problem fetching historical player data: ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        logger.info("Historical player data fetched.", data.length);
+        return data;
+    } catch (error) {
+        const err = error as Error;
+        logger.error("Error fetching historical player data", err);
+        console.error("Error fetching historical player data", err);
+    }
+    return [];
 }
