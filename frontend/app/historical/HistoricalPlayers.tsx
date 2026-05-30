@@ -1,7 +1,8 @@
 'use client';
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getHistoricalPlayers } from "../api/players";
 import HistoricalPlayerCard from "./HistoricalPlayerCard";
+import { mainLogger } from "../lib/log";
 
 export interface HistoricalPlayer {
     id: number,
@@ -34,8 +35,11 @@ type season_data = {
     position_tier: number,
 }
 
+export type position = 'All' | 'QB' | 'WR' | 'RB' | 'TE';
+
 export default function HistoricalPlayers() {
     const [ historicalPlayers, setHistoricalPlayers ] = useState<HistoricalPlayer[]>([]);
+    const [ positionSelect, setPositionSelect ] = useState<position>('All');
 
     useEffect(() => {
         async function getPlayers() {
@@ -46,11 +50,22 @@ export default function HistoricalPlayers() {
         getPlayers();
     }, []);
 
+    const handleClick = (e: any) => {
+        const value = e.currentTarget.textContent;
+        console.log("button clicked", value);
+        setPositionSelect(value);
+    }
+
     return (
         <div>
-            {historicalPlayers.map((p, idx) => (
-                <HistoricalPlayerCard key={idx} player={p}/>
-            ))}
+            <div className="flex gap-10 p-10 text-xl font-semibold">
+                <button onClick={handleClick}>All</button>
+                <button onClick={handleClick}>QB</button>
+                <button onClick={handleClick}>RB</button>
+                <button onClick={handleClick}>WR</button>
+                <button onClick={handleClick}>TE</button>
+            </div>
+            <HistoricalPlayerCard players={historicalPlayers} position={positionSelect}/>
         </div>
     )
 }

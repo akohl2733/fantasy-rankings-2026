@@ -1,29 +1,38 @@
-import { HistoricalPlayer } from "./historicalPlayers";
+import { HistoricalPlayer, position } from "./HistoricalPlayers";
 
 interface HistoricalPlayerCardProps {
-    player: HistoricalPlayer,
+    players: HistoricalPlayer[],
+    position: position,
 }
 
-export default function HistoricalPlayerCard({player}: HistoricalPlayerCardProps){
+export default function HistoricalPlayerCard({players, position}: HistoricalPlayerCardProps){
 
     return (
         <div>
             <div className="inline-grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-8 gap-x-18 justify-center">
-                <div className="bg-sky-200 text-gray-600 text-2xl font-bold py-6 px-10 mb-2 rounded min-w-64">
+                {players.map((p, idx) => {
+                if (p.position === position || position == 'All') {
+                return (<div key={idx}>
+                    <div className="bg-sky-200 text-gray-600 text-2xl font-bold py-6 px-10 mb-2 rounded min-w-64">
                     <h1>
-                        {player.name} - {player.position}
+                        {p.name} - {p.position}
                     </h1>
+                    <br />
                     <h3>
-                        {player.data.map((szn, id) => (
+                        {p.data.toReversed().map((szn, id) => (
                             <div key={id}>
-                                <div>{szn.season}</div>
-                                <div>{szn.rank_ppg}</div>
-                                <div>{szn.rank_total}</div>
-                                <div>{szn.position_tier}</div>
+                                <div>Season: {szn.season}</div>
+                                <div>Ranking (PPG): {szn.rank_ppg}</div>
+                                <div>Ranking (Total Points): {szn.rank_total}</div>
+                                <div>Positional Tier: {p.position}{szn.position_tier}</div>
+                                <br />
                             </div>
                         ))}
                     </h3>
                 </div>
+                </div>
+                )}
+                })}
             </div>
         </div>
     )
