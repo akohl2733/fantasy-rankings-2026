@@ -49,8 +49,9 @@ def return_positional_dfs(df: pd.DataFrame) -> dict:
         position_dfs.append(pos_df)
 
     unified_positional_df = pd.concat(position_dfs, ignore_index=True)
+    sorted_unified_df = unified_positional_df.sort_values(by="season", ascending=False)
 
-    return unified_positional_df
+    return sorted_unified_df
 
 
 

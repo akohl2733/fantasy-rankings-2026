@@ -1,15 +1,14 @@
 'use client';
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getHistoricalPlayers } from "../api/players";
 import HistoricalPlayerCard from "./HistoricalPlayerCard";
-import { mainLogger } from "../lib/log";
 
 export interface HistoricalPlayer {
     id: number,
     name: string,
     position: string,
     headshot_url: string,
-    data: [season_data]
+    data: season_data[]
 }
 
 type season_data = {
@@ -50,20 +49,19 @@ export default function HistoricalPlayers() {
         getPlayers();
     }, []);
 
-    const handleClick = (e: any) => {
-        const value = e.currentTarget.textContent;
-        console.log("button clicked", value);
-        setPositionSelect(value);
+    const handleClick = (targetPosition: position) => {
+        console.log("Filtering by:", targetPosition);
+        setPositionSelect(targetPosition);
     }
 
     return (
         <div>
             <div className="flex gap-10 p-10 text-xl font-semibold">
-                <button onClick={handleClick}>All</button>
-                <button onClick={handleClick}>QB</button>
-                <button onClick={handleClick}>RB</button>
-                <button onClick={handleClick}>WR</button>
-                <button onClick={handleClick}>TE</button>
+                <button onClick={() => handleClick('All')}>All</button>
+                <button onClick={() => handleClick('QB')}>QB</button>
+                <button onClick={() => handleClick('RB')}>RB</button>
+                <button onClick={() => handleClick('WR')}>WR</button>
+                <button onClick={() => handleClick('TE')}>TE</button>
             </div>
             <HistoricalPlayerCard players={historicalPlayers} position={positionSelect}/>
         </div>
