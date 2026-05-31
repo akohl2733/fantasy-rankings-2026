@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { getHistoricalPlayers } from "../api/players";
 import HistoricalPlayerCard from "./HistoricalPlayerCard";
+import CardGrid from "./CardGrid";
 
 export interface HistoricalPlayer {
     id: number,
@@ -63,7 +64,7 @@ export default function HistoricalPlayers() {
                 <button onClick={() => handleClick('WR')}>WR</button>
                 <button onClick={() => handleClick('TE')}>TE</button>
             </div>
-            <HistoricalPlayerCard players={historicalPlayers} position={positionSelect}/>
+            <CardGrid players={historicalPlayers} position={positionSelect}/>
         </div>
     )
 }

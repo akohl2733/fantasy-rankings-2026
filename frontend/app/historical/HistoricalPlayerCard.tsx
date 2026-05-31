@@ -1,18 +1,24 @@
 import { HistoricalPlayer, position } from "./HistoricalPlayers";
 
-interface HistoricalPlayerCardProps {
+export interface HistoricalPlayerCardProps {
     players: HistoricalPlayer[],
-    position: position,
+    position?: position,
 }
 
-export default function HistoricalPlayerCard({players, position}: HistoricalPlayerCardProps){
+export function HistoricalPlayerCard({players, position}: HistoricalPlayerCardProps){
 
-    const filteredPlayers = players.filter(p => p.position == 'All' || p.position === position);
+    let filteredPlayers: HistoricalPlayer[];
 
+    if (position) { 
+        filteredPlayers = players.filter(p => position == 'All' || p.position === position); 
+    }
+    else { 
+        filteredPlayers = players; 
+    }
+        
     return (
         <div>
-            <div className="inline-grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-8 gap-x-18 justify-center">
-                {filteredPlayers.map((p, idx) => {
+            {filteredPlayers.map((p, idx) => {
                 return (
                     <div key={idx}>
                     <div className="bg-sky-200 text-gray-600 text-2xl font-bold py-6 px-10 mb-2 rounded min-w-64">
@@ -35,7 +41,6 @@ export default function HistoricalPlayerCard({players, position}: HistoricalPlay
                 </div>
                 )}
             )}
-            </div>
         </div>
     )
 }

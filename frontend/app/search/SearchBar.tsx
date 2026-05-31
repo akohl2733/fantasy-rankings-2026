@@ -1,14 +1,15 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { getPlayersBySimilarName } from '../api/players';
-import PlayerCard, { Player } from '../components/PlayerCard';
+import { getSimilarHistoricalPlayers } from '../api/players';
+import { HistoricalPlayer } from '../Historical/HistoricalPlayers';
+import { HistoricalPlayerCard } from '../historical/HistoricalPlayerCard';
 
 export default function PlayerSearchBar() {
     const inputRef = useRef<HTMLInputElement>(null);
     const [ playerName, setPlayerName ] = useState<string>("")
-    const [ players, setPlayers ] = useState<Player[]>([])
-    const [ selectedPlayer, setSelectedPlayer ] = useState<Player | null>(null)
+    const [ players, setPlayers ] = useState<HistoricalPlayer[]>([])
+    const [ selectedPlayer, setSelectedPlayer ] = useState<HistoricalPlayer | null>(null)
     const [ isPending, setIsPending ] = useState(false);
 
     const timerRef = useRef<NodeJS.Timeout | null>(null)
@@ -33,7 +34,7 @@ export default function PlayerSearchBar() {
             // try and get the players after 300 ms of no clicking
             timerRef.current = setTimeout(async() => {
                 try {
-                    const res = await getPlayersBySimilarName(name);
+                    const res = await getSimilarHistoricalPlayers(name);
                     setPlayers(res);
                 } catch (error) {
                     console.error("Failed to fetch players:", error);
@@ -70,7 +71,7 @@ export default function PlayerSearchBar() {
 
 
     // when player is selected, prevent dropdown from showing
-    const onSelectPlayerClick = (selectedPlayer: Player) => {
+    const onSelectPlayerClick = (selectedPlayer: HistoricalPlayer) => {
         setSelectedPlayer(selectedPlayer);
         setPlayers([]);
     }
@@ -113,7 +114,7 @@ return (
                     </button>
                 </div>
                     <div className='w-full flex justify-center'>
-                    {selectedPlayer && <PlayerCard players={[selectedPlayer]} />}
+                    {selectedPlayer && <HistoricalPlayerCard players={[selectedPlayer]}/>}
                 </div>
 
             </div>

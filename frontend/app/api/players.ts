@@ -66,3 +66,23 @@ export async function getHistoricalPlayers(): Promise<HistoricalPlayer[]> {
     }
     return [];
 }
+
+export async function getSimilarHistoricalPlayers(playerName: string | null): Promise<HistoricalPlayer[]> {
+    const logger = mainLogger.getSubLogger({ name: "getSimilarHistoricalPlayers" });
+    try {
+        const res = await fetch(`http://localhost:8000/historical/similar_name?name=${playerName}`);
+        if (!res.ok) {
+            throw new Error(`There was a problem fetching historical player data: ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        logger.info("Similarly named historical players fetched.", data.length);
+        return data;
+    } catch (error) {
+        const err = error as Error;
+        logger.error("Error fetching similarly named historical player data", err);
+        console.error("Error fetching similarly named historical player data", err);
+    }
+    return [];
+}
