@@ -164,6 +164,65 @@ async def get_historical_player_by_name_search_bar(
     return completed_results
 
 
+@app.get("/historical/{year}", response_model=list[HistoricalPlayerModel])
+async def get_historical_player_by_season(
+    year: int = 2025, 
+    db: AsyncSession = Depends(get_async_session)
+):
+    if year not in [2023, 2024, 2025]:
+        return []
+    
+    stmt = (
+        select(HistoricalPlayer)
+        .join(HistoricalPlayer.season_data)
+        .where(HistoricalPlayerSeasonData.season == year)
+        .options(selectinload(HistoricalPlayer.season_data))
+    )
+    
+    result = await db.execute(stmt)
+    players = result.scalars().all()
+
+    players.sort(
+        key=lambda player: next(
+            (season.points_per_game for season in player.season_data if season.season == year),
+            999
+        ),
+        reverse=True
+    )
+
+    completed_results = [
+        HistoricalPlayerModel(
+            id=player.id,
+            name=player.name,
+            position=player.position,
+            headshot_url=player.headshot_url or "",
+            data=[HistoricalPlayerSeasonDataModel(
+                season=season.season,
+                team=season.team,
+                targets=season.targets,
+                target_share=season.target_share,
+                receptions=season.receptions,
+                receiving_yards=season.receiving_yards,
+                receiving_tds=season.receiving_tds,
+                carries=season.carries,
+                rushing_yards=season.rushing_yards,
+                rushing_tds=season.rushing_tds,
+                passing_yards=season.passing_yards,
+                passing_tds=season.passing_tds,
+                turnovers=season.turnovers,
+                points_per_game=season.points_per_game,
+                total_points=season.total_points,
+                rank_ppg=season.rank_ppg,
+                rank_total=season.rank_total,
+                position_tier=season.position_tier,
+                ) 
+                for season in player.season_data if season.season == year
+            ],
+        ) for player in players]
+    
+    return completed_results
+
+
 @app.get("/health")
 def health():
     return {"this": "worked"}
