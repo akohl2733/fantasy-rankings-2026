@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import { getHistoricalPlayers } from "../api/players";
-import HistoricalPlayerCard from "./HistoricalPlayerCard";
+import HistoricalPlayerCard from "../components/HistoricalPlayerCard";
 import CardGrid from "./CardGrid";
 
 export interface HistoricalPlayer {

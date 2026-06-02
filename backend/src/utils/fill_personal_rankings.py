@@ -1,20 +1,34 @@
 import asyncio
 import os
+from sqlalchemy import select
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 csv_file = os.path.join(BASE_DIR, "data/files/fantasy-rankings-07-25-25.csv")
 
 import pandas as pd
 from src.db import async_session_factory
-from src.model import Player
+from src.model import Player, HistoricalPlayer
 
 df = pd.read_csv(csv_file)
 
 async def populate_players():
+
     try:
         async with async_session_factory() as session:
+
+            historical_res = await session.execute(select(HistoricalPlayer))
+            all_historical = historical_res.scalars().all()
+
+            historical_lookup = {
+                f"{p.name}_{p.position}": p.id for p in all_historical
+            }
+
             for idx, row in df.iterrows():
                 print(idx)
+                lookup_str = f"{row["Name"]}_{row["Position"]}"
+                fk_historical = historical_lookup.get(lookup_str)
+                if fk_historical is None:
+                    print(lookup_str)
                 session.add(
                     Player(
                         rank=row["Overall Rank"],
@@ -32,6 +46,7 @@ async def populate_players():
                         turnovers=row["Turnovers"],
                         total_points=row["Total Fantasy Points"],
                         tier=row["Tier"],
+                        historical_player_id=fk_historical
                     )
                 )
             await session.commit()
@@ -41,5 +56,5 @@ async def populate_players():
     finally:
         print("All went well!")
 
-# if __name__ == "__main__":
-#     asyncio.run(populate_players())
+if __name__ == "__main__":
+    asyncio.run(populate_players())

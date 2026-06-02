@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { getSimilarHistoricalPlayers } from '../api/players';
 import { HistoricalPlayer } from '../Historical/HistoricalPlayers';
-import { HistoricalPlayerCard } from '../historical/HistoricalPlayerCard';
+import { HistoricalPlayerCard } from '../components/HistoricalPlayerCard';
 
 export default function PlayerSearchBar() {
     const inputRef = useRef<HTMLInputElement>(null);

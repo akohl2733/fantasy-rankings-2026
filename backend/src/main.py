@@ -106,7 +106,7 @@ async def getHistoricalPlayers(db: AsyncSession=Depends(get_async_session)):
                 rank_ppg=season.rank_ppg,
                 rank_total=season.rank_total,
                 position_tier=season.position_tier,
-                ) for season in sorted(player.season_data, key=lambda s: s.season, reverse=True)
+                ) for season in player.season_data
             ],
         ) 
         for player in players
@@ -155,7 +155,7 @@ async def get_historical_player_by_name_search_bar(
                 rank_ppg=season.rank_ppg,
                 rank_total=season.rank_total,
                 position_tier=season.position_tier,
-                ) for season in sorted(player.season_data, key=lambda s: s.season, reverse=True)
+                ) for season in player.season_data
             ],
         ) 
         for player in players

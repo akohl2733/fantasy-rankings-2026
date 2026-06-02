@@ -1,4 +1,4 @@
-import {HistoricalPlayerCard, HistoricalPlayerCardProps} from "./HistoricalPlayerCard";
+import {HistoricalPlayerCard, HistoricalPlayerCardProps} from "../components/HistoricalPlayerCard";
 
 
 export default function CardGrid({players, position}: HistoricalPlayerCardProps) {

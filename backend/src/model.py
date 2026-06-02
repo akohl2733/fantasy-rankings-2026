@@ -24,6 +24,15 @@ class Player(Base):
     total_points: Mapped[float]
     tier: Mapped[int]
 
+    historical_player_id: Mapped[int | None] = mapped_column(ForeignKey("historical_player.id"), nullable=True)
+
+    historical_profile: Mapped[HistoricalPlayer] = relationship(
+        "HistoricalPlayer",
+        order_by="Player.rank.asc()",
+        back_populates="draft_rankings",
+        uselist=False,
+    )
+
 
 class HistoricalPlayerSeasonData(Base):
     __tablename__ = "historical_player_season_data"
@@ -69,4 +78,13 @@ class HistoricalPlayer(Base):
     position: Mapped[str]=mapped_column(String(3), nullable=False)
     headshot_url: Mapped[str]=mapped_column(String(500), nullable=True)
 
-    season_data: Mapped[list["HistoricalPlayerSeasonData"]] = relationship(back_populates="player")
+    season_data: Mapped[list["HistoricalPlayerSeasonData"]] = relationship(
+        back_populates="player", 
+        order_by="HistoricalPlayerSeasonData.season.desc()"
+        )
+
+    draft_rankings: Mapped[Player] = relationship(
+        "Player",
+        back_populates="historical_profile",
+        uselist=False,
+    )
