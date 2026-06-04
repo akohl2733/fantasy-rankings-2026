@@ -5,9 +5,9 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db import get_async_session
-from model import Player, HistoricalPlayer, HistoricalPlayerSeasonData
-from schema import PlayerModel, HistoricalPlayerModel, HistoricalPlayerSeasonDataModel
+from .db import get_async_session
+from .model import Player, HistoricalPlayer, HistoricalPlayerSeasonData
+from .schema import PlayerModel, HistoricalPlayerModel, HistoricalPlayerSeasonDataModel
 import uvicorn
 
 app = FastAPI() 
