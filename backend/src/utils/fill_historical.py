@@ -38,8 +38,8 @@ async def input_historical_data(seasons: list[int]):
                         session.add(player)
                         player_objects[key] = player
 
-                await session.commit()
-                print("Historical Player table successfully updated with player info 🫡")
+                await session.flush()
+                print("Historical Player table flushed with player info 🫡")
                 
                 # create player_lookup for next loop afterwards
                 db_result = await session.execute(select(HistoricalPlayer))
