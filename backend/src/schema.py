@@ -8,16 +8,16 @@ class PlayerModel(BaseModel):
     position: str
     position_rank: int
     team: str
-    receptions: float
-    receiving_yards: float
-    receiving_tds: float
-    rushing_yards: float
-    rushing_tds: float
-    passing_yards: float
-    passing_tds: float
-    turnovers: float
-    total_points: float
-    tier: int
+    receptions: float | None
+    receiving_yards: float | None
+    receiving_tds: float | None
+    rushing_yards: float | None
+    rushing_tds: float | None
+    passing_yards: float | None
+    passing_tds: float | None
+    turnovers: float | None
+    total_points: float | None
+    tier: int | None
 
 # data for each season to be appended
 class HistoricalPlayerSeasonDataModel(BaseModel):

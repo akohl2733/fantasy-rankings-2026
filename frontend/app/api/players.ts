@@ -1,5 +1,5 @@
 import { Player } from "../components/PlayerCard";
-import { HistoricalPlayer } from "../historical/historicalPlayers";
+import { HistoricalPlayer } from "../historical/HistoricalPlayers";
 import { mainLogger } from "../lib/log";
 
 

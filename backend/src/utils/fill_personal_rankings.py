@@ -3,7 +3,7 @@ import os
 from sqlalchemy import select
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-csv_file = os.path.join(BASE_DIR, "data/files/fantasy-rankings-07-25-25.csv")
+csv_file = os.path.join(BASE_DIR, "data/files/fantasy-rankings-06-26.csv")
 
 import pandas as pd
 from src.db import async_session_factory

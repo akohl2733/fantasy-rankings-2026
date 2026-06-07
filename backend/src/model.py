@@ -11,18 +11,18 @@ class Player(Base):
     rank: Mapped[int]=mapped_column(nullable=False)
     name: Mapped[str]=mapped_column(String(40), nullable=False)
     position: Mapped[str]=mapped_column(String(3), nullable=False)
-    position_rank: Mapped[int]
+    position_rank: Mapped[int | None]
     team: Mapped[str]=mapped_column(String(30), nullable=False)
-    receptions: Mapped[float]
-    receiving_yards: Mapped[float]
-    receiving_tds: Mapped[float]
-    rushing_yards: Mapped[float]
-    rushing_tds: Mapped[float]
-    passing_yards: Mapped[float]
-    passing_tds: Mapped[float]
-    turnovers: Mapped[float]
-    total_points: Mapped[float]
-    tier: Mapped[int]
+    receptions: Mapped[float | None]
+    receiving_yards: Mapped[float | None]
+    receiving_tds: Mapped[float | None]
+    rushing_yards: Mapped[float | None]
+    rushing_tds: Mapped[float | None]
+    passing_yards: Mapped[float | None]
+    passing_tds: Mapped[float | None]
+    turnovers: Mapped[float | None]
+    total_points: Mapped[float | None]
+    tier: Mapped[int | None]
 
     historical_player_id: Mapped[int | None] = mapped_column(ForeignKey("historical_player.id"), nullable=True)
 
