@@ -6,7 +6,6 @@ const NAV_LINKS = [
     { name: "Home", href: '/'},
     { name: "Rankings", href: '/rankings'},
     { name: "Search", href: '/search'},
-    { name: "Historical Data", href: '/historical'},
 ];
 
 export default function NavBar() {

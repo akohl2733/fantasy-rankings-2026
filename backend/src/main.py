@@ -44,15 +44,15 @@ async def get_players(
     return all_players
 
 
-@app.get("/players/{id}", response_model=PlayerModel)
+@app.get("/players/{rank}", response_model=PlayerModel)
 async def get_indv_players(
-    id: int, 
+    rank: int, 
     db: AsyncSession = Depends(get_async_session)
 ):
     stmt = select(Player).options(
         selectinload(Player.historical_profile)
         .selectinload(HistoricalPlayer.data)
-        ).filter(Player.rank == id)
+        ).filter(Player.rank == int(rank))
     
     result = await db.execute(stmt)
     specific_player = result.scalars().first()

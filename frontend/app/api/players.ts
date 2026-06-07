@@ -1,5 +1,4 @@
-import { Player } from "../components/PlayerCard";
-import { HistoricalPlayer } from "../historical/HistoricalPlayers";
+import { HistoricalPlayer } from "../interfaces/historical";
 import { mainLogger } from "../lib/log";
 
 
@@ -21,6 +20,30 @@ export async function fetchPlayers(){
         logger.error("Fetching of players failed", e);
     }
 };
+
+
+export async function getPlayerByRank(rank: string) {
+    const logger = mainLogger.getSubLogger({ name: "getPlayerByRank" });
+    if (!rank) {
+        logger.warn("No valid player rank provided to 'getPlayerByRank'");
+        return
+    }
+
+    try {
+        const res = await fetch(`http://localhost:8000/players/${rank}`);
+        if (!res.ok) {
+            throw new Error(`There was an error: ${res.status}`);
+        }
+
+        const data = await res.json();
+        return data;
+    } catch (err) {
+        const error = err as Error;
+        logger.error("There was an error fetching player by ranking", error);
+        console.error("There was an error fetching player by ranking", error);
+    }
+    return [];
+}
 
 
 // Hit `/search_results` endpoint for getting player by similar name

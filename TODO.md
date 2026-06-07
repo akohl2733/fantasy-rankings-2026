@@ -1,5 +1,8 @@
 **TODO's**
 
+- Bug Fixes:
+    - Sorting by ID instead of rank
+    
 - Search of player brings you to a dynamic page with data on each players historical seasons and finishes
     - Each player has rankings based on previous seasons
 

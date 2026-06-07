@@ -1,23 +1,7 @@
-export interface Player {
-    id: number;
-    rank: number;
-    name: string;
-    position: string;
-    position_rank: number;
-    team: string;
-    receptions: number | undefined;
-    receiving_yards: number | undefined;
-    receiving_tds: number | undefined;
-    rushing_yards: number | undefined;
-    rushing_tds: number | undefined;
-    passing_yards: number | undefined;
-    passing_tds: number | undefined;
-    turnovers: number | undefined;
-    total_points: number | undefined;
-    tier: number | undefined;
-}
+import { HistoricalPlayer } from "../interfaces/historical";
+import { Player } from "../interfaces/rankings";
 
-export default function PlayerCard({ players }: { players: Player[] }) {
+export default function RankingCard({ players }: { players: Player[] }) {
     return (
         <div className="inline-grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-8 gap-x-18 justify-center">
             {players?.map((p, id) => {
