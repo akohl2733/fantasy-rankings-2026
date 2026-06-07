@@ -28,7 +28,6 @@ class Player(Base):
 
     historical_profile: Mapped[HistoricalPlayer] = relationship(
         "HistoricalPlayer",
-        order_by="Player.rank.asc()",
         back_populates="draft_rankings",
         uselist=False,
     )
@@ -67,7 +66,7 @@ class HistoricalPlayerSeasonData(Base):
     rank_total: Mapped[int]=mapped_column(nullable=False)
     position_tier: Mapped[int]=mapped_column(default=0)
 
-    player: Mapped["HistoricalPlayer"] = relationship(back_populates="season_data")
+    player: Mapped["HistoricalPlayer"] = relationship(back_populates="data")
 
 
 class HistoricalPlayer(Base):
@@ -78,12 +77,12 @@ class HistoricalPlayer(Base):
     position: Mapped[str]=mapped_column(String(3), nullable=False)
     headshot_url: Mapped[str]=mapped_column(String(500), nullable=True)
 
-    season_data: Mapped[list["HistoricalPlayerSeasonData"]] = relationship(
+    data: Mapped[list["HistoricalPlayerSeasonData"]] = relationship(
         back_populates="player", 
         order_by="HistoricalPlayerSeasonData.season.desc()"
         )
 
-    draft_rankings: Mapped[Player] = relationship(
+    draft_rankings: Mapped["Player"] = relationship(
         "Player",
         back_populates="historical_profile",
         uselist=False,

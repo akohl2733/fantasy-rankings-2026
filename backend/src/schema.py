@@ -1,24 +1,5 @@
 from pydantic import BaseModel
 
-# personal rankings model
-class PlayerModel(BaseModel):
-    id: int
-    rank: int
-    name: str
-    position: str
-    position_rank: int
-    team: str
-    receptions: float | None
-    receiving_yards: float | None
-    receiving_tds: float | None
-    rushing_yards: float | None
-    rushing_tds: float | None
-    passing_yards: float | None
-    passing_tds: float | None
-    turnovers: float | None
-    total_points: float | None
-    tier: int | None
-
 # data for each season to be appended
 class HistoricalPlayerSeasonDataModel(BaseModel):
     season: int
@@ -50,6 +31,31 @@ class HistoricalPlayerModel(BaseModel):
     id: int
     name: str
     position: str
-    headshot_url: str
+    headshot_url: str | None
     data: list[HistoricalPlayerSeasonDataModel]
+
+    model_config = {"from_attributes": True}
     
+
+# personal rankings model
+class PlayerModel(BaseModel):
+    id: int
+    rank: int
+    name: str
+    position: str
+    position_rank: int
+    team: str
+    receptions: float | None
+    receiving_yards: float | None
+    receiving_tds: float | None
+    rushing_yards: float | None
+    rushing_tds: float | None
+    passing_yards: float | None
+    passing_tds: float | None
+    turnovers: float | None
+    total_points: float | None
+    tier: int | None
+    historical_player_id: int | None
+    historical_profile: HistoricalPlayerModel | None
+
+    model_config = {"from_attributes": True}
