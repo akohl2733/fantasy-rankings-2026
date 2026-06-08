@@ -30,11 +30,16 @@ def basic():
     return {"something": "For now"}
 
 
+# endpoint for getting all player information
 @app.get("/players", response_model=list[PlayerModel])
 async def get_players(
     db: AsyncSession = Depends(get_async_session)
 ):     
-    stmt = select(Player).options(selectinload(Player.historical_profile).selectinload(HistoricalPlayer.data))
+    stmt = select(Player).options(
+        selectinload(Player.historical_profile)
+        .selectinload(HistoricalPlayer.data)
+        ).order_by(Player.rank.asc())
+    
     result = await db.execute(stmt)
     all_players = result.scalars().all()
 
@@ -44,6 +49,7 @@ async def get_players(
     return all_players
 
 
+# endpoint for getting player information by ranking
 @app.get("/players/{rank}", response_model=PlayerModel)
 async def get_indv_players(
     rank: int, 
@@ -53,7 +59,7 @@ async def get_indv_players(
         selectinload(Player.historical_profile)
         .selectinload(HistoricalPlayer.data)
         ).filter(Player.rank == int(rank))
-    
+        
     result = await db.execute(stmt)
     specific_player = result.scalars().first()
 
@@ -63,6 +69,7 @@ async def get_indv_players(
     return specific_player
 
 
+# endpoint for getting player data via search bar
 @app.get("/search_results", response_model=list[PlayerModel])
 async def get_player_by_name_search_bar(
     name: str = Query(default=""), 
@@ -71,11 +78,17 @@ async def get_player_by_name_search_bar(
     if not name.strip():
         return []
     
-    stmt = select(Player).where(Player.name.ilike(f'%{name}%'))
+    stmt = select(Player).options(
+        selectinload(Player.historical_profile)
+        .selectinload(HistoricalPlayer.data)
+        ).where(Player.name.ilike(f'%{name}%')
+        ).order_by(Player.rank.asc())
+
     result = await db.execute(stmt)
     players = result.scalars().all()
 
     return players
+
 
 # endpoint for querying on historical player data
 @app.get("/historical", response_model=list[HistoricalPlayerModel])
@@ -88,25 +101,6 @@ async def getHistoricalPlayers(db: AsyncSession=Depends(get_async_session)):
     if not players:
         return []
     
-    return players
-
-@app.get("/historical/similar_name", response_model=list[HistoricalPlayerModel])
-async def get_historical_player_by_name_search_bar(
-    name: str = Query(default=""), 
-    db: AsyncSession = Depends(get_async_session)
-):
-    if not name.strip():
-        return []
-    
-    stmt = select(
-        HistoricalPlayer
-        ).options(
-            selectinload(HistoricalPlayer.data)
-            ).where(HistoricalPlayer.name.ilike(f'%{name}%'))
-    
-    result = await db.execute(stmt)
-    players = result.scalars().all()
-
     return players
 
 

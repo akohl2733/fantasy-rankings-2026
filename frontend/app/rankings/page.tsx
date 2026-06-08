@@ -1,8 +1,9 @@
 'use client';
+
 import { useState, useEffect } from 'react';
 import RankingCard from '../components/RankingCard';
 import { fetchPlayers } from '../api/players';
-import { Player } from '../components/RankingCard';
+import { Player } from '../interfaces/rankings';
 
 export default function allPlayers() {
     const [ players, setPlayers ] = useState<Player[]>([]);

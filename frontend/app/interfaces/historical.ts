@@ -3,7 +3,7 @@ export interface HistoricalPlayer {
     name: string,
     position: position,
     headshot_url: string,
-    data: season_data[] | null
+    data: season_data[]
 }
 
 export interface season_data {
