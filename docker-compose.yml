@@ -13,7 +13,7 @@ services:
     build: 
       context: ./frontend
       dockerfile: Dockerfile
-    user: root
+    user: "root"
     ports:
       - "3000:3000"
     environment:
