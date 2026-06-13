@@ -1,8 +1,5 @@
 **TODO's**
 
-- Bug Fixes:
-    - Nada
-
 - Draft analyzer: Once you select a player - rank remaining players based on positions of need
     - Data sources
         - players on same team vs others
@@ -15,3 +12,10 @@
 
 
 - Weekly blog: information on draft strategies
+
+- Databricks Analytics
+- Age information on players
+- have players in table compared to ECR potentially
+- write ups on players
+- age is important
+- add 2022 season (and others if possible)
