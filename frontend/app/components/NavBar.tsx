@@ -1,6 +1,8 @@
 'use client';
 import Link from "next/link";
 import Image from 'next/image';
+import { ClerkProvider, Show, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
+
 
 const NAV_LINKS = [
     { name: "Home", href: '/'},
@@ -27,8 +29,42 @@ export default function NavBar() {
                     })
                     }
                 </div>
-                <div className="flex-1 max-w-64 min-w-32 p-5 rounded-md font-medium text-2xl text-center text-gray-500  overflow-hidden text-ellipsis whitespace-nowrap">
-                    Learn our Story
+                <div className="flex-1 max-w-64 min-w-32 p-5 rounded-md text-center font-medium text-2xl text-gray-500 overflow-hidden text-ellipsis whitespace-nowrap">
+                    <Show when="signed-out">
+                        {/* Wrap both in a sub-flex container to control their spacing explicitly */}
+                        <div className="flex items-center justify-center gap-8"> 
+                            <SignInButton>
+                                <button className="text-gray-500 hover:text-gray-700 font-medium text-lg cursor-pointer transition-colors">
+                                    Sign In
+                                </button>
+                            </SignInButton>
+                            
+                            <SignUpButton>
+                                <button className="bg-[#6c47ff] hover:bg-[#5b3ce0] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-5 sm:px-6 cursor-pointer transition-colors shadow-sm">
+                                    Sign Up
+                                </button>
+                            </SignUpButton>
+                        </div>
+                    </Show>
+                    
+                    <Show when="signed-in">
+                        <div className="flex justify-center items-center">
+                            <UserButton 
+                                appearance={{
+                                    elements: {
+                                        userButtonTrigger: {
+                                            width: "56px",
+                                            height: "56px",
+                                        },
+                                        avatarBox: {
+                                            width: "56px",
+                                            height: "56px",
+                                        }
+                                    }
+                                }}
+                            />
+                        </div>
+                    </Show>
                 </div>
             </div>
         </nav>
