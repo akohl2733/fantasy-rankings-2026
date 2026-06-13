@@ -1,8 +1,9 @@
 'use client';
+
 import { useState, useEffect } from 'react';
-import PlayerCard from '../components/PlayerCard';
+import RankingCard from '../components/RankingCard';
 import { fetchPlayers } from '../api/players';
-import { Player } from '../components/PlayerCard';
+import { Player } from '../interfaces/rankings';
 
 export default function allPlayers() {
     const [ players, setPlayers ] = useState<Player[]>([]);
@@ -20,7 +21,7 @@ export default function allPlayers() {
     return (
         <>
             <div className="flex justify-center w-full">
-                <PlayerCard players={players}/>
+                <RankingCard players={players}/>
             </div>
         </>
     )

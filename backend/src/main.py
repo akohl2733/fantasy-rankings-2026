@@ -5,9 +5,9 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db import get_async_session
-from model import Player, HistoricalPlayer, HistoricalPlayerSeasonData
-from schema import PlayerModel, HistoricalPlayerModel, HistoricalPlayerSeasonDataModel
+from .db import get_async_session
+from .model import Player, HistoricalPlayer, HistoricalPlayerSeasonData
+from .schema import PlayerModel, HistoricalPlayerModel, HistoricalPlayerSeasonDataModel
 import uvicorn
 
 app = FastAPI() 
@@ -30,33 +30,46 @@ def basic():
     return {"something": "For now"}
 
 
+# endpoint for getting all player information
 @app.get("/players", response_model=list[PlayerModel])
 async def get_players(
     db: AsyncSession = Depends(get_async_session)
 ):     
-    stmt = select(Player)
+    stmt = select(Player).options(
+        selectinload(Player.historical_profile)
+        .selectinload(HistoricalPlayer.data)
+        ).order_by(Player.rank.asc())
+    
     result = await db.execute(stmt)
     all_players = result.scalars().all()
 
     if all_players is None:
         return {"Error": "No data"}
+    
     return all_players
 
 
-@app.get("/players/{id}", response_model=PlayerModel)
+# endpoint for getting player information by ranking
+@app.get("/players/{rank}", response_model=PlayerModel)
 async def get_indv_players(
-    id: int, 
+    rank: int, 
     db: AsyncSession = Depends(get_async_session)
 ):
-    stmt = select(Player).filter(Player.rank == id)
+    stmt = select(Player).options(
+        selectinload(Player.historical_profile)
+        .selectinload(HistoricalPlayer.data)
+        ).filter(Player.rank == int(rank))
+        
     result = await db.execute(stmt)
     specific_player = result.scalars().first()
 
     if specific_player is None:
         return {"That player": "Does not exist"}
+    
     return specific_player
 
 
+# endpoint for getting player data via search bar
 @app.get("/search_results", response_model=list[PlayerModel])
 async def get_player_by_name_search_bar(
     name: str = Query(default=""), 
@@ -65,16 +78,22 @@ async def get_player_by_name_search_bar(
     if not name.strip():
         return []
     
-    stmt = select(Player).where(Player.name.ilike(f'%{name}%'))
+    stmt = select(Player).options(
+        selectinload(Player.historical_profile)
+        .selectinload(HistoricalPlayer.data)
+        ).where(Player.name.ilike(f'%{name}%')
+        ).order_by(Player.rank.asc())
+
     result = await db.execute(stmt)
     players = result.scalars().all()
 
     return players
 
+
 # endpoint for querying on historical player data
 @app.get("/historical", response_model=list[HistoricalPlayerModel])
 async def getHistoricalPlayers(db: AsyncSession=Depends(get_async_session)):
-    stmt = select(HistoricalPlayer).options(selectinload(HistoricalPlayer.season_data))
+    stmt = select(HistoricalPlayer).options(selectinload(HistoricalPlayer.data))
     
     results = await db.execute(stmt)
     players = results.scalars().all()
@@ -82,86 +101,7 @@ async def getHistoricalPlayers(db: AsyncSession=Depends(get_async_session)):
     if not players:
         return []
     
-    completed_results = [HistoricalPlayerModel(
-            id=player.id,
-            name=player.name,
-            position=player.position,
-            headshot_url=player.headshot_url or "",
-            data=[HistoricalPlayerSeasonDataModel(
-                season=season.season,
-                team=season.team,
-                targets=season.targets,
-                target_share=season.target_share,
-                receptions=season.receptions,
-                receiving_yards=season.receiving_yards,
-                receiving_tds=season.receiving_tds,
-                carries=season.carries,
-                rushing_yards=season.rushing_yards,
-                rushing_tds=season.rushing_tds,
-                passing_yards=season.passing_yards,
-                passing_tds=season.passing_tds,
-                turnovers=season.turnovers,
-                points_per_game=season.points_per_game,
-                total_points=season.total_points,
-                rank_ppg=season.rank_ppg,
-                rank_total=season.rank_total,
-                position_tier=season.position_tier,
-                ) for season in sorted(player.season_data, key=lambda s: s.season, reverse=True)
-            ],
-        ) 
-        for player in players
-    ]
-    
-    return completed_results
-
-@app.get("/historical/similar_name", response_model=list[HistoricalPlayerModel])
-async def get_historical_player_by_name_search_bar(
-    name: str = Query(default=""), 
-    db: AsyncSession = Depends(get_async_session)
-):
-    if not name.strip():
-        return []
-    
-    stmt = select(
-        HistoricalPlayer
-        ).options(
-            selectinload(HistoricalPlayer.season_data)
-            ).where(HistoricalPlayer.name.ilike(f'%{name}%'))
-    
-    result = await db.execute(stmt)
-    players = result.scalars().all()
-
-    completed_results = [HistoricalPlayerModel(
-            id=player.id,
-            name=player.name,
-            position=player.position,
-            headshot_url=player.headshot_url or "",
-            data=[HistoricalPlayerSeasonDataModel(
-                season=season.season,
-                team=season.team,
-                targets=season.targets,
-                target_share=season.target_share,
-                receptions=season.receptions,
-                receiving_yards=season.receiving_yards,
-                receiving_tds=season.receiving_tds,
-                carries=season.carries,
-                rushing_yards=season.rushing_yards,
-                rushing_tds=season.rushing_tds,
-                passing_yards=season.passing_yards,
-                passing_tds=season.passing_tds,
-                turnovers=season.turnovers,
-                points_per_game=season.points_per_game,
-                total_points=season.total_points,
-                rank_ppg=season.rank_ppg,
-                rank_total=season.rank_total,
-                position_tier=season.position_tier,
-                ) for season in sorted(player.season_data, key=lambda s: s.season, reverse=True)
-            ],
-        ) 
-        for player in players
-    ]
-    
-    return completed_results
+    return players
 
 
 @app.get("/historical/{year}", response_model=list[HistoricalPlayerModel])
@@ -174,9 +114,9 @@ async def get_historical_player_by_season(
     
     stmt = (
         select(HistoricalPlayer)
-        .join(HistoricalPlayer.season_data)
+        .join(HistoricalPlayer.data)
         .where(HistoricalPlayerSeasonData.season == year)
-        .options(selectinload(HistoricalPlayer.season_data))
+        .options(selectinload(HistoricalPlayer.data.and_(HistoricalPlayerSeasonData.season == year)))
     )
     
     result = await db.execute(stmt)
@@ -184,48 +124,20 @@ async def get_historical_player_by_season(
 
     players.sort(
         key=lambda player: next(
-            (season.points_per_game for season in player.season_data if season.season == year),
+            (season.points_per_game for season in player.data if season.season == year),
             999
         ),
         reverse=True
     )
 
-    completed_results = [
-        HistoricalPlayerModel(
-            id=player.id,
-            name=player.name,
-            position=player.position,
-            headshot_url=player.headshot_url or "",
-            data=[HistoricalPlayerSeasonDataModel(
-                season=season.season,
-                team=season.team,
-                targets=season.targets,
-                target_share=season.target_share,
-                receptions=season.receptions,
-                receiving_yards=season.receiving_yards,
-                receiving_tds=season.receiving_tds,
-                carries=season.carries,
-                rushing_yards=season.rushing_yards,
-                rushing_tds=season.rushing_tds,
-                passing_yards=season.passing_yards,
-                passing_tds=season.passing_tds,
-                turnovers=season.turnovers,
-                points_per_game=season.points_per_game,
-                total_points=season.total_points,
-                rank_ppg=season.rank_ppg,
-                rank_total=season.rank_total,
-                position_tier=season.position_tier,
-                ) 
-                for season in player.season_data if season.season == year
-            ],
-        ) for player in players]
-    
-    return completed_results
+    return players
 
 
 @app.get("/health")
 def health():
     return {"this": "worked"}
 
+
 if __name__ == "__main__":
-    uvicorn.run("main:app", port=8000, reload=True)
+    import uvicorn
+    uvicorn.run("src.main:app", host="127.0.0.1", port=8000, reload=True)

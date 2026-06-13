@@ -1,7 +1,21 @@
 **TODO's**
 
-*Get historical data based on player name in search of individual players*
+- Draft analyzer: Once you select a player - rank remaining players based on positions of need
+    - Data sources
+        - players on same team vs others
+        - positional strategies based on what was selected
+    - Select strategy
+        - Best available (default)
+        - Hero RB
+        - Zero RB
+        - Early QB/TE specific
 
-*Get rankings based on year - back to python backend for ingesting year by year data*
 
-*Remove historical nav bar piece*
+- Weekly blog: information on draft strategies
+
+- Databricks Analytics
+- Age information on players
+- have players in table compared to ECR potentially
+- write ups on players
+- age is important
+- add 2022 season (and others if possible)
