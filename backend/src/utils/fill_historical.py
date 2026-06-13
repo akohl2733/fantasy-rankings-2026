@@ -10,6 +10,12 @@ from src.model import HistoricalPlayer, HistoricalPlayerSeasonData
 from src.utils.nfl_data import return_positional_dfs
 
 
+# helper to clean string/object series explicitly
+def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    cleaned_df = df.astype(object).where(pd.notna(df), None)
+    return cleaned_df
+
+
 # adds all historical parquet files to historical_player_data table
 async def input_historical_data(seasons: list[int]):
     player_objects = {} # created to hold player objects
@@ -25,6 +31,8 @@ async def input_historical_data(seasons: list[int]):
     for szn in seasons:
         df = pd.read_parquet(os.path.join(BASE_URL, f"./data/stats_player_reg_{szn}.parquet"))
         unified_df = return_positional_dfs(df)  # returns df with new columns
+
+        unified_df = clean_dataframe(unified_df)
 
         try:
             async with async_session_factory() as session:
