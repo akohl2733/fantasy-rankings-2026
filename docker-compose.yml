@@ -1,4 +1,19 @@
 services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx_proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - app-network
+
   db:
     image: postgres:15-alpine
     container_name: fantasy_db
@@ -9,6 +24,8 @@ services:
       POSTGRES_DB: ${DB_NAME}
     ports:
       - "5432:5432"
+    networks:
+      - app-network
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -26,6 +43,8 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
     command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - app-network
     volumes:
       - ./backend:/app
     depends_on:
@@ -40,12 +59,18 @@ services:
       - "3000:3000"
     environment:
       - HOSTNAME=0.0.0.0
+    networks:
+      - app-network
     volumes:
       - ./frontend:/app
       - /app/.next
       - /app/node_modules
     depends_on:
       - backend
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   postgres_data:
