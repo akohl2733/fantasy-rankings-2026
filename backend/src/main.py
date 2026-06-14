@@ -1,13 +1,13 @@
-from collections import defaultdict
-from fastapi import Depends, FastAPI, Query
+from fastapi import Depends, FastAPI, Query, HTTPException, status, Security
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_clerk_auth import ClerkConfig, ClerkHTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .db import get_async_session
 from .model import Player, HistoricalPlayer, HistoricalPlayerSeasonData
-from .schema import PlayerModel, HistoricalPlayerModel, HistoricalPlayerSeasonDataModel
+from .schema import PlayerModel, HistoricalPlayerModel
 import uvicorn
 
 app = FastAPI() 
@@ -25,16 +25,35 @@ app.add_middleware(
 
 )
 
+# Use your Clerk JWKS endpoint
+clerk_config = ClerkConfig(jwks_url="https://obliging-owl-20.clerk.accounts.dev/.well-known/jwks.json") 
+clerk_auth_guard = ClerkHTTPBearer(config=clerk_config)
+
+# helper function to determine if authorized
+def get_current_user(credentials: HTTPAuthorizationCredentials):
+    clerk_user_id = credentials.decoded.get("sub")
+
+    if not clerk_user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication token is missing the user identifier."
+        )
+    return clerk_user_id
+
+
 @app.get("/")
-def basic():
-    return {"something": "For now"}
+def basic(credentials: HTTPAuthorizationCredentials = Security(clerk_auth_guard)):
+    return {"message": "You are authorized!", "user_data": credentials.decoded}
 
 
 # endpoint for getting all player information
 @app.get("/players", response_model=list[PlayerModel])
 async def get_players(
+    credentials: HTTPAuthorizationCredentials = Security(clerk_auth_guard),
     db: AsyncSession = Depends(get_async_session)
 ):     
+    user_id = get_current_user(credentials=credentials)
+
     stmt = select(Player).options(
         selectinload(Player.historical_profile)
         .selectinload(HistoricalPlayer.data)

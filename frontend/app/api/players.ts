@@ -2,10 +2,16 @@ import { HistoricalPlayer } from "../interfaces/historical";
 import { mainLogger } from "../lib/log";
 
 
-export async function fetchPlayers(){
+export async function fetchPlayers(token: string){
     const logger = mainLogger.getSubLogger({ name: 'fetchPlayers' })
     try {
-        const res = await fetch("http://localhost:8000/players");
+        const res = await fetch("http://localhost:8000/players", {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
         if (!res.ok) {
             throw new Error(`There was an error on fetching: ${res.status}`);
         }
