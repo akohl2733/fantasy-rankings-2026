@@ -13,7 +13,7 @@ const NAV_LINKS = [
 export default function NavBar() {
 
     return (
-        <nav className='w-full pt-5 pb-20'>
+        <nav className='w-full pt-5 pb-10'>
             <div className="w-full flex justify-evenly items-center">
                 <div className="flex-1 max-w-64 min-w-32 p-5 rounded-md text-center font-medium text-2xl text-gray-500 overflow-hidden flex justify-center items-center">
                     <Image src="/logo/zeebe_fantasy.png" width={120} height={120} alt="ZF Logo"/>

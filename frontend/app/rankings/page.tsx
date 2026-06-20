@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import RankingCard from '../components/RankingCard';
+import RankingCard from './RankingCard';
 import { fetchPlayers } from '../api/players';
 import { Player } from '../interfaces/rankings';
 import { useAuth } from '@clerk/nextjs';
