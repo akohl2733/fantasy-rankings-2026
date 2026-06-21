@@ -102,5 +102,5 @@ async def input_historical_data(seasons: list[int]):
 
 
 if __name__ == "__main__":
-    asyncio.run(input_historical_data([2023, 2024, 2025]))
+    asyncio.run(input_historical_data([2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]))
     print("Success 😎")
