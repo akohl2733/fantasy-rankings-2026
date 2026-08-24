@@ -1,12 +1,17 @@
-import { Player } from "../components/PlayerCard";
-import { HistoricalPlayer } from "../historical/historicalPlayers";
 import { mainLogger } from "../lib/log";
 
+const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8000";
 
-export async function fetchPlayers(){
+export async function fetchPlayers(token: string){
     const logger = mainLogger.getSubLogger({ name: 'fetchPlayers' })
     try {
-        const res = await fetch("http://localhost:8000/players");
+        const res = await fetch(`${BACKEND_URL}/players`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
         if (!res.ok) {
             throw new Error(`There was an error on fetching: ${res.status}`);
         }
@@ -23,6 +28,30 @@ export async function fetchPlayers(){
 };
 
 
+export async function getPlayerByRank(rank: string) {
+    const logger = mainLogger.getSubLogger({ name: "getPlayerByRank" });
+    if (!rank) {
+        logger.warn("No valid player rank provided to 'getPlayerByRank'");
+        return
+    }
+
+    try {
+        const res = await fetch(`${BACKEND_URL}/players/${rank}`);
+        if (!res.ok) {
+            throw new Error(`There was an error: ${res.status}`);
+        }
+
+        const data = await res.json();
+        return data;
+    } catch (err) {
+        const error = err as Error;
+        logger.error("There was an error fetching player by ranking", error);
+        console.error("There was an error fetching player by ranking", error);
+    }
+    return [];
+}
+
+
 // Hit `/search_results` endpoint for getting player by similar name
 export async function getPlayersBySimilarName(playerName: string | null) {
     const logger = mainLogger.getSubLogger({ name: 'getPlayersBySimilarName' });
@@ -31,7 +60,7 @@ export async function getPlayersBySimilarName(playerName: string | null) {
         return
     }
     try {
-        const res = await fetch(`http://localhost:8000/search_results?name=${playerName}`)
+        const res = await fetch(`${BACKEND_URL}/search_results?name=${playerName}`)
         if (!res.ok) {
             throw new Error(`There was an Error: ${res.status}`);
         }
@@ -44,45 +73,4 @@ export async function getPlayersBySimilarName(playerName: string | null) {
         logger.error("Error fetching players by similar names", e);
         console.error("Error on fetching.");
     }
-}
-
-// Hits the /historical endpoint for list of all player data
-export async function getHistoricalPlayers(): Promise<HistoricalPlayer[]> {
-    const logger = mainLogger.getSubLogger({ name: "getHistoricalPlayers" });
-    try {
-        const res = await fetch("http://localhost:8000/historical");
-        if (!res.ok) {
-            throw new Error(`There was a problem fetching historical player data: ${res.status}`);
-        }
-
-        const data = await res.json();
-
-        logger.info("Historical player data fetched.", data.length);
-        return data;
-    } catch (error) {
-        const err = error as Error;
-        logger.error("Error fetching historical player data", err);
-        console.error("Error fetching historical player data", err);
-    }
-    return [];
-}
-
-export async function getSimilarHistoricalPlayers(playerName: string | null): Promise<HistoricalPlayer[]> {
-    const logger = mainLogger.getSubLogger({ name: "getSimilarHistoricalPlayers" });
-    try {
-        const res = await fetch(`http://localhost:8000/historical/similar_name?name=${playerName}`);
-        if (!res.ok) {
-            throw new Error(`There was a problem fetching historical player data: ${res.status}`);
-        }
-
-        const data = await res.json();
-
-        logger.info("Similarly named historical players fetched.", data.length);
-        return data;
-    } catch (error) {
-        const err = error as Error;
-        logger.error("Error fetching similarly named historical player data", err);
-        console.error("Error fetching similarly named historical player data", err);
-    }
-    return [];
 }

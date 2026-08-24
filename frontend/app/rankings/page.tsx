@@ -1,26 +1,32 @@
 'use client';
+
 import { useState, useEffect } from 'react';
-import PlayerCard from '../components/PlayerCard';
+import RankingCard from './RankingCard';
 import { fetchPlayers } from '../api/players';
-import { Player } from '../components/PlayerCard';
+import { Player } from '../interfaces/rankings';
+import { useAuth } from '@clerk/nextjs';
 
 export default function allPlayers() {
+    const { getToken, isLoaded, isSignedIn } = useAuth();
     const [ players, setPlayers ] = useState<Player[]>([]);
 
 
     useEffect(() => {
         const getPlayerData = async () => {
-            const res = await fetchPlayers();
-            setPlayers(res);
+            const token = await getToken();
+            if (token) {
+                const res = await fetchPlayers(token);
+                setPlayers(res);
+            }
         }
         getPlayerData()
-    }, [])
+    }, [isLoaded, isSignedIn, getToken])
 
     
     return (
         <>
             <div className="flex justify-center w-full">
-                <PlayerCard players={players}/>
+                <RankingCard players={players}/>
             </div>
         </>
     )

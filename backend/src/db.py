@@ -1,12 +1,18 @@
 import os
+from dotenv import load_dotenv
 
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine, AsyncSession
 
-curr_working_dir = os.path.dirname(os.path.abspath(__file__))
-db_path = os.path.abspath(os.path.join(curr_working_dir, "..", "data", "player.db"))
+# config postgres DB
+load_dotenv()
+DB_HOST=os.getenv("DB_HOST")
+DB_PORT=os.getenv("DB_PORT")
+DB_NAME=os.getenv("DB_NAME")
+DB_USER=os.getenv("DB_USER")
+DB_PASSWORD=os.getenv("DB_PASSWORD")
 
 # use async session
-async_engine = create_async_engine(f'sqlite+aiosqlite:///{db_path}')
+async_engine = create_async_engine(f'postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}')
 async_session_factory = async_sessionmaker(
     bind=async_engine,
     class_=AsyncSession,

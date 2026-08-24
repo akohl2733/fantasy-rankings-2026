@@ -1,15 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { getSimilarHistoricalPlayers } from '../api/players';
-import { HistoricalPlayer } from '../Historical/HistoricalPlayers';
-import { HistoricalPlayerCard } from '../historical/HistoricalPlayerCard';
+import { getPlayersBySimilarName } from '../api/players';
+import { Player } from '../interfaces/rankings';
 
 export default function PlayerSearchBar() {
     const inputRef = useRef<HTMLInputElement>(null);
     const [ playerName, setPlayerName ] = useState<string>("")
-    const [ players, setPlayers ] = useState<HistoricalPlayer[]>([])
-    const [ selectedPlayer, setSelectedPlayer ] = useState<HistoricalPlayer | null>(null)
+    const [ players, setPlayers ] = useState<Player[]>([])
     const [ isPending, setIsPending ] = useState(false);
 
     const timerRef = useRef<NodeJS.Timeout | null>(null)
@@ -34,7 +32,7 @@ export default function PlayerSearchBar() {
             // try and get the players after 300 ms of no clicking
             timerRef.current = setTimeout(async() => {
                 try {
-                    const res = await getSimilarHistoricalPlayers(name);
+                    const res = await getPlayersBySimilarName(name);
                     setPlayers(res);
                 } catch (error) {
                     console.error("Failed to fetch players:", error);
@@ -60,7 +58,6 @@ export default function PlayerSearchBar() {
     const handleInputChange = (e: string) => {
         setIsPending(false);
         setPlayerName(e);
-        setSelectedPlayer(null)
     }
 
 
@@ -71,8 +68,7 @@ export default function PlayerSearchBar() {
 
 
     // when player is selected, prevent dropdown from showing
-    const onSelectPlayerClick = (selectedPlayer: HistoricalPlayer) => {
-        setSelectedPlayer(selectedPlayer);
+    const onSelectPlayerClick = (selectedPlayer: Player) => {
         setPlayers([]);
     }
 
@@ -90,20 +86,23 @@ return (
                             onChange={(e) => handleInputChange(e.target.value)} 
                             placeholder='ex. Justin Jefferson'
                             className="border border-gray-400 rounded-md bg-sky-200 text-gray-600 p-4 min-w-90 h-15 focus:outline-none"/>
-                        {players.length > 0 && !isPending && (
-                            <div className="absolute left-0 right-0 mt-1 border border-gray-400 rounded-md bg-white flex flex-col z-50 max-h-60 overflow-y-auto shadow-lg">
-                                {players.map((player, idx) => (
-                                    <button 
-                                        key={player.id || idx} 
-                                        id={`${idx}`} 
-                                        onClick={() => onSelectPlayerClick(player)}
-                                        className="w-full text-left p-3 text-gray-700 hover:bg-gray-100 border-b border-gray-100 last:border-0 text-lg transition-colors"
-                                    >
-                                        {player.name}
-                                    </button>
-                                ))}
-                            </div>
+                        {!players && (
+                            <div>There are no players that match</div>
                         )}
+                            {players.length > 0 && !isPending && (
+                                <div className="absolute left-0 right-0 mt-1 border border-gray-400 rounded-md bg-white flex flex-col z-50 max-h-60 overflow-y-auto shadow-lg">
+                                    {players.map((player, idx) => (
+                                        <button 
+                                            key={player.id || idx} 
+                                            id={`${idx}`} 
+                                            onClick={() => onSelectPlayerClick(player)}
+                                            className="w-full text-left p-3 text-gray-700 hover:bg-gray-100 border-b border-gray-100 last:border-0 text-lg transition-colors"
+                                        >
+                                            {<a href={`http://localhost:3000/players/${player.rank}`}>{player.name}</a>}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                     </div>
                     
                     <button 
@@ -112,9 +111,6 @@ return (
                     >
                         Start typing a player's name...
                     </button>
-                </div>
-                    <div className='w-full flex justify-center'>
-                    {selectedPlayer && <HistoricalPlayerCard players={[selectedPlayer]}/>}
                 </div>
 
             </div>
