@@ -86,20 +86,23 @@ return (
                             onChange={(e) => handleInputChange(e.target.value)} 
                             placeholder='ex. Justin Jefferson'
                             className="border border-gray-400 rounded-md bg-sky-200 text-gray-600 p-4 min-w-90 h-15 focus:outline-none"/>
-                        {players.length > 0 && !isPending && (
-                            <div className="absolute left-0 right-0 mt-1 border border-gray-400 rounded-md bg-white flex flex-col z-50 max-h-60 overflow-y-auto shadow-lg">
-                                {players.map((player, idx) => (
-                                    <button 
-                                        key={player.id || idx} 
-                                        id={`${idx}`} 
-                                        onClick={() => onSelectPlayerClick(player)}
-                                        className="w-full text-left p-3 text-gray-700 hover:bg-gray-100 border-b border-gray-100 last:border-0 text-lg transition-colors"
-                                    >
-                                        {<a href={`http://localhost:3000/players/${player.rank}`}>{player.name}</a>}
-                                    </button>
-                                ))}
-                            </div>
+                        {!players && (
+                            <div>There are no players that match</div>
                         )}
+                            {players.length > 0 && !isPending && (
+                                <div className="absolute left-0 right-0 mt-1 border border-gray-400 rounded-md bg-white flex flex-col z-50 max-h-60 overflow-y-auto shadow-lg">
+                                    {players.map((player, idx) => (
+                                        <button 
+                                            key={player.id || idx} 
+                                            id={`${idx}`} 
+                                            onClick={() => onSelectPlayerClick(player)}
+                                            className="w-full text-left p-3 text-gray-700 hover:bg-gray-100 border-b border-gray-100 last:border-0 text-lg transition-colors"
+                                        >
+                                            {<a href={`http://localhost:3000/players/${player.rank}`}>{player.name}</a>}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                     </div>
                     
                     <button 

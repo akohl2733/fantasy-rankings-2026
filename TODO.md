@@ -18,4 +18,3 @@
 - have players in table compared to ECR potentially
 - write ups on players
 - age is important
-- add 2022 season (and others if possible)

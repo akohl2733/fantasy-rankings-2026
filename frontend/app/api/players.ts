@@ -1,11 +1,11 @@
-import { HistoricalPlayer } from "../interfaces/historical";
 import { mainLogger } from "../lib/log";
 
+const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8000";
 
 export async function fetchPlayers(token: string){
     const logger = mainLogger.getSubLogger({ name: 'fetchPlayers' })
     try {
-        const res = await fetch("http://localhost:8000/players", {
+        const res = await fetch(`${BACKEND_URL}/players`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -36,7 +36,7 @@ export async function getPlayerByRank(rank: string) {
     }
 
     try {
-        const res = await fetch(`http://localhost:8000/players/${rank}`);
+        const res = await fetch(`${BACKEND_URL}/players/${rank}`);
         if (!res.ok) {
             throw new Error(`There was an error: ${res.status}`);
         }
@@ -60,7 +60,7 @@ export async function getPlayersBySimilarName(playerName: string | null) {
         return
     }
     try {
-        const res = await fetch(`http://localhost:8000/search_results?name=${playerName}`)
+        const res = await fetch(`${BACKEND_URL}/search_results?name=${playerName}`)
         if (!res.ok) {
             throw new Error(`There was an Error: ${res.status}`);
         }

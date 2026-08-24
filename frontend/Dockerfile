@@ -4,8 +4,8 @@ WORKDIR /app
 
 COPY package*.json ./
 
-# Install only production dependencies
-RUN npm ci --omit=dev
+# Install all dependencies
+RUN npm ci
 
 COPY . .
 
