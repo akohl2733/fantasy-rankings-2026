@@ -1,4 +1,4 @@
-import { HistoricalPlayer, position } from "./HistoricalPlayers";
+import { HistoricalPlayer, position } from "../historical/HistoricalPlayers";
 
 export interface HistoricalPlayerCardProps {
     players: HistoricalPlayer[],

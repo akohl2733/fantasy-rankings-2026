@@ -11,18 +11,26 @@ class Player(Base):
     rank: Mapped[int]=mapped_column(nullable=False)
     name: Mapped[str]=mapped_column(String(40), nullable=False)
     position: Mapped[str]=mapped_column(String(3), nullable=False)
-    position_rank: Mapped[int]
+    position_rank: Mapped[int | None]
     team: Mapped[str]=mapped_column(String(30), nullable=False)
-    receptions: Mapped[float]
-    receiving_yards: Mapped[float]
-    receiving_tds: Mapped[float]
-    rushing_yards: Mapped[float]
-    rushing_tds: Mapped[float]
-    passing_yards: Mapped[float]
-    passing_tds: Mapped[float]
-    turnovers: Mapped[float]
-    total_points: Mapped[float]
-    tier: Mapped[int]
+    receptions: Mapped[float | None]
+    receiving_yards: Mapped[float | None]
+    receiving_tds: Mapped[float | None]
+    rushing_yards: Mapped[float | None]
+    rushing_tds: Mapped[float | None]
+    passing_yards: Mapped[float | None]
+    passing_tds: Mapped[float | None]
+    turnovers: Mapped[float | None]
+    total_points: Mapped[float | None]
+    tier: Mapped[int | None]
+
+    historical_player_id: Mapped[int | None] = mapped_column(ForeignKey("historical_player.id"), nullable=True)
+
+    historical_profile: Mapped[HistoricalPlayer] = relationship(
+        "HistoricalPlayer",
+        back_populates="draft_rankings",
+        uselist=False,
+    )
 
 
 class HistoricalPlayerSeasonData(Base):
@@ -58,7 +66,7 @@ class HistoricalPlayerSeasonData(Base):
     rank_total: Mapped[int]=mapped_column(nullable=False)
     position_tier: Mapped[int]=mapped_column(default=0)
 
-    player: Mapped["HistoricalPlayer"] = relationship(back_populates="season_data")
+    player: Mapped["HistoricalPlayer"] = relationship(back_populates="data")
 
 
 class HistoricalPlayer(Base):
@@ -69,4 +77,13 @@ class HistoricalPlayer(Base):
     position: Mapped[str]=mapped_column(String(3), nullable=False)
     headshot_url: Mapped[str]=mapped_column(String(500), nullable=True)
 
-    season_data: Mapped[list["HistoricalPlayerSeasonData"]] = relationship(back_populates="player")
+    data: Mapped[list["HistoricalPlayerSeasonData"]] = relationship(
+        back_populates="player", 
+        order_by="HistoricalPlayerSeasonData.season.desc()"
+        )
+
+    draft_rankings: Mapped["Player"] = relationship(
+        "Player",
+        back_populates="historical_profile",
+        uselist=False,
+    )
