@@ -1,6 +1,6 @@
 import { mainLogger } from "../lib/log";
 
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8000";
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.BACKEND_URL || "http://localhost:8000";
 
 export async function fetchPlayers(token: string){
     const logger = mainLogger.getSubLogger({ name: 'fetchPlayers' })
@@ -57,10 +57,10 @@ export async function getPlayersBySimilarName(playerName: string | null) {
     const logger = mainLogger.getSubLogger({ name: 'getPlayersBySimilarName' });
     if (!playerName) {
         logger.warn("No name provided to 'getPlayersBySimilarName'");
-        return
+        return [];
     }
     try {
-        const res = await fetch(`${BACKEND_URL}/search_results?name=${playerName}`)
+        const res = await fetch(`${BACKEND_URL}/search_results?name=${encodeURIComponent(playerName)}`);
         if (!res.ok) {
             throw new Error(`There was an Error: ${res.status}`);
         }
@@ -68,9 +68,10 @@ export async function getPlayersBySimilarName(playerName: string | null) {
 
         logger.info("Players with similar names fetch successful", playerList);
         
-        return playerList
+        return playerList;
     } catch (e: any) {
         logger.error("Error fetching players by similar names", e);
-        console.error("Error on fetching.");
+        console.error("Error on fetching.", e);
+        return [];
     }
 }

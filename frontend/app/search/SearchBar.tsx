@@ -33,7 +33,7 @@ export default function PlayerSearchBar() {
             timerRef.current = setTimeout(async() => {
                 try {
                     const res = await getPlayersBySimilarName(name);
-                    setPlayers(res);
+                    setPlayers(res ?? []);
                 } catch (error) {
                     console.error("Failed to fetch players:", error);
                 }
@@ -89,7 +89,7 @@ return (
                         {!players && (
                             <div>There are no players that match</div>
                         )}
-                            {players.length > 0 && !isPending && (
+                            {players?.length > 0 && !isPending && (
                                 <div className="absolute left-0 right-0 mt-1 border border-gray-400 rounded-md bg-white flex flex-col z-50 max-h-60 overflow-y-auto shadow-lg">
                                     {players.map((player, idx) => (
                                         <button 

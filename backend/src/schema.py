@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel
 
 # data for each season to be appended
@@ -57,5 +58,24 @@ class PlayerModel(BaseModel):
     tier: int | None
     historical_player_id: int | None
     historical_profile: HistoricalPlayerModel | None
+
+    model_config = {"from_attributes": True}
+
+
+class WatchlistCreate(BaseModel):
+    player_id: int
+    note: str | None = None
+
+
+class WatchlistUpdate(BaseModel):
+    note: str | None = None
+
+
+class UserWatchlistModel(BaseModel):
+    id: int
+    player_id: int
+    note: str | None
+    created_at: datetime
+    player: PlayerModel
 
     model_config = {"from_attributes": True}

@@ -1,5 +1,6 @@
-from sqlalchemy import String, Float, ForeignKey, UniqueConstraint
+from sqlalchemy import String, Float, ForeignKey, UniqueConstraint, DateTime
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from datetime import datetime, timezone
 
 class Base(DeclarativeBase):
     pass
@@ -87,3 +88,17 @@ class HistoricalPlayer(Base):
         back_populates="historical_profile",
         uselist=False,
     )
+
+class UserWatchlist(Base):
+    __tablename__ = "user_watchlist"
+    __table_args__ = (
+        UniqueConstraint("clerk_user_id", "player_id", name="uq_user_player_watchlist"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, nullable=False)
+    clerk_user_id: Mapped[str] = mapped_column(String(100), index=True, nullable=False)
+    player_id: Mapped[int] = mapped_column(ForeignKey("all_players.id"), nullable=False)
+    note: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+    player: Mapped["Player"] = relationship("Player")
